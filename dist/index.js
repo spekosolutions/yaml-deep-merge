@@ -74,10 +74,11 @@ var fs_1 = __nccwpck_require__(7147);
 var yaml = __importStar(__nccwpck_require__(1917));
 var deepmerge_1 = __importDefault(__nccwpck_require__(6323));
 var setOutput = function (key, value) {
-    // Temporary hack until core actions library catches up with GitHub's new recommendations
-    var output = process.env.GITHUB_OUTPUT;
-    if (output) {
-        (__nccwpck_require__(7147).appendFileSync)(output, "".concat(key, "=").concat(value, "\n"));
+    try {
+        core.setOutput(key, JSON.stringify(value));
+    }
+    catch (error) {
+        core.setFailed("Error setting output ".concat(key, ": ").concat(error.message));
     }
 };
 var run = function () { return __awaiter(void 0, void 0, void 0, function () {

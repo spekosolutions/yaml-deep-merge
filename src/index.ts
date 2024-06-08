@@ -3,11 +3,12 @@ import { promises as fs } from 'fs';
 import * as yaml from 'js-yaml';
 import deepmerge from 'deepmerge';
 
+
 const setOutput = (key: string, value: any): void => {
-  // Temporary hack until core actions library catches up with GitHub's new recommendations
-  const output = process.env.GITHUB_OUTPUT;
-  if (output) {
-    require('fs').appendFileSync(output, `${key}=${value}\n`);
+  try {
+    core.setOutput(key, JSON.stringify(value));
+  } catch (error: any) {
+    core.setFailed(`Error setting output ${key}: ${error.message}`);
   }
 };
 
