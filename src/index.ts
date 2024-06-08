@@ -1,32 +1,60 @@
-import * as core from '@actions/core'
-import { promises as fs } from 'fs'
-import * as yaml from 'js-yaml'
+import * as core from '@actions/core';
+import { promises as fs } from 'fs';
+import * as yaml from 'js-yaml';
+import deepmerge from 'deepmerge';
 
-function setOutput(key, value) {
-  // Temporary hack until core actions library catches up with github new recommendations
-  const output = process.env['GITHUB_OUTPUT']
-  fs.appendFileSync(output, `${key}=${value}`)
-}
+const setOutput = (key: string, value: any): void => {
+  // Temporary hack until core actions library catches up with GitHub's new recommendations
+  const output = process.env.GITHUB_OUTPUT;
+  if (output) {
+    require('fs').appendFileSync(output, `${key}=${value}\n`);
+  }
+};
 
-const run = async () => {
-    try {
-        const file = core.getInput('file')
-        const keys: string[] = JSON.parse(core.getInput('key-path'))
+const run = async (): Promise<void> => {
+  try {
+    const filePathsInput = core.getInput('config-files');
+    core.info(`config-files input: ${filePathsInput}`); // Debug log for config-files input
+    
+    const keyPathInput = core.getInput('key-path');
+    const keys: string[] | null = keyPathInput ? JSON.parse(keyPathInput) : null;
+    core.info(`key-path input: ${keys}`); // Debug log for key-path input
 
-        const content = await fs.readFile(file, 'utf8')
+    // Parse the multi-line string input into an array of file paths
+    const filePaths = filePathsInput
+      .split('\n')
+      .map((path: string) => path.trim())
+      .filter((path: string) => path.length > 0);
+    core.info(`Parsed file paths: ${filePaths}`); // Debug log for parsed file paths
 
-        let yamlData = yaml.load(content)
+    // Initialize an empty object to hold the merged YAML data
+    let mergedYamlData: any = {};
 
-        if (yamlData == null || yamlData == undefined) {
-            core.setFailed('Error in reading the yaml file')
-            return
-        }
+    // Iterate over all file paths and merge the YAML data
+    for (const filePath of filePaths) {
+      core.info(`Processing file: ${filePath}`); // Debug log for each file being processed
+      const content = await fs.readFile(filePath, 'utf8');
+      const yamlData = yaml.load(content);
 
-        let output = keys.reduce((dict, key) => dict[key], yamlData)
-        setOutput('data', output)
-    } catch (error) {
-        core.setFailed((error as Error).message)
+      if (yamlData === null || yamlData === undefined) {
+        core.setFailed(`Error in reading the YAML file: ${filePath}`);
+        return;
+      }
+
+      // Deep merge the YAML data
+      mergedYamlData = deepmerge(mergedYamlData, yamlData);
     }
-}
 
-run()
+    // Extract the desired output using the specified keys, if provided
+    const output = keys ? keys.reduce((dict: any, key: string) => dict[key], mergedYamlData) : mergedYamlData;
+    setOutput('data', output);
+  } catch (error) {
+    if (error instanceof Error) {
+      core.setFailed(error.message);
+    } else {
+      core.setFailed('An unknown error occurred');
+    }
+  }
+};
+
+run();

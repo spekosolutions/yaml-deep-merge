@@ -1,22 +1,21 @@
-name: 'Read yaml'
-description: 'Read data from a YAML file'
+name: "YAML Deep Merge"
+description: "This action reads YAML configuration files, with support to variable interpolation"
+author: "spekosolutions"
 branding:
-  icon: book
-  color: yellow  
-
+  icon: box
+  color: blue
 inputs:
-  file:
-    description: 'YAML file to read from'
+  file-paths:
+    description: "Config files"
     required: true
-    
+    default: ""
   key-path:
-    description: 'List of keys to follow'
-    required: true
-
+    description: "Key path to filter out in the yaml file"
+    required: false
+    default: ""
 output:
   data:
     description: 'Data read from YAML file'
-
 runs:
-  using: 'node16'
+  using: "node20"
   main: 'dist/index.js'
