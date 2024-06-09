@@ -4,11 +4,11 @@ import * as yaml from 'js-yaml';
 import deepmerge from 'deepmerge';
 
 
-const setOutput = (key: string, value: any): void => {
+const setOutput = (name: string, value: any): void => {
   try {
-    core.setOutput(key, JSON.stringify(value));
+    core.setOutput(name, JSON.stringify(value));
   } catch (error: any) {
-    core.setFailed(`Error setting output ${key}: ${error.message}`);
+    core.setFailed(`Error setting output ${name}: ${error.message}`);
   }
 };
 
@@ -48,7 +48,7 @@ const run = async (): Promise<void> => {
 
     // Extract the desired output using the specified keys, if provided
     const output = keys ? keys.reduce((dict: any, key: string) => dict[key], mergedYamlData) : mergedYamlData;
-    setOutput('data', output);
+    setOutput('output', output); // Example name for the output
   } catch (error) {
     if (error instanceof Error) {
       core.setFailed(error.message);

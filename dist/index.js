@@ -73,12 +73,12 @@ var core = __importStar(__nccwpck_require__(2186));
 var fs_1 = __nccwpck_require__(7147);
 var yaml = __importStar(__nccwpck_require__(1917));
 var deepmerge_1 = __importDefault(__nccwpck_require__(6323));
-var setOutput = function (key, value) {
+var setOutput = function (name, value) {
     try {
-        core.setOutput(key, JSON.stringify(value));
+        core.setOutput(name, JSON.stringify(value));
     }
     catch (error) {
-        core.setFailed("Error setting output ".concat(key, ": ").concat(error.message));
+        core.setFailed("Error setting output ".concat(name, ": ").concat(error.message));
     }
 };
 var run = function () { return __awaiter(void 0, void 0, void 0, function () {
@@ -120,7 +120,7 @@ var run = function () { return __awaiter(void 0, void 0, void 0, function () {
                 return [3 /*break*/, 1];
             case 4:
                 output = keys ? keys.reduce(function (dict, key) { return dict[key]; }, mergedYamlData) : mergedYamlData;
-                setOutput('data', output);
+                setOutput('output', output); // Example name for the output
                 return [3 /*break*/, 6];
             case 5:
                 error_1 = _a.sent();

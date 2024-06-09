@@ -17,4 +17,4 @@ jobs:
 
       - name: Get read-yaml outputs
         run: |
-          echo '${{ steps.using.outputs.data }}'
+          echo '${{ steps.using.outputs.output }}'
