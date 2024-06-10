@@ -13,9 +13,9 @@ inputs:
     description: "Key path to filter out in the yaml file"
     required: false
     default: ""
-output:
-  data:
-    description: 'Data read from YAML file'
+# output:
+#   data:
+#     description: 'Data read from YAML file'
 runs:
   using: "node20"
   main: 'dist/index.js'

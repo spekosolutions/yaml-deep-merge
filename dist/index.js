@@ -120,7 +120,7 @@ var run = function () { return __awaiter(void 0, void 0, void 0, function () {
                 return [3 /*break*/, 1];
             case 4:
                 output = keys ? keys.reduce(function (dict, key) { return dict[key]; }, mergedYamlData) : mergedYamlData;
-                setOutput('output', output); // Example name for the output
+                setOutput('data', output); // Example name for the output
                 return [3 /*break*/, 6];
             case 5:
                 error_1 = _a.sent();

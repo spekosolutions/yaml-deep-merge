@@ -48,7 +48,7 @@ const run = async (): Promise<void> => {
 
     // Extract the desired output using the specified keys, if provided
     const output = keys ? keys.reduce((dict: any, key: string) => dict[key], mergedYamlData) : mergedYamlData;
-    setOutput('output', output); // Example name for the output
+    setOutput('data', output); // Example name for the output
   } catch (error) {
     if (error instanceof Error) {
       core.setFailed(error.message);
